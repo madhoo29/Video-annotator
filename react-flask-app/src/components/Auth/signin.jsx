@@ -6,10 +6,10 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-
+import axios from 'axios';
+import {useHistory} from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		marginTop: theme.spacing(8),
@@ -30,45 +30,51 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export const SignIn = () => {
+export const SignIn = props=> {
 	const classes = useStyles();
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const history=useHistory();
+	/*const [ID, setID] = useState("");
+	const [Password, setPassword] = useState("");
 
 	useEffect(() => {
 		if (localStorage.getItem("user")) {
 			window.location.href = "/";
 		}
-	}, []);
+	}, []);*/
+	const [UserLogin,setUserLogin]=useState({
+		ID:"",
+		Password:""
+	});
+	const handleInput=(e)=>{
+		const name=e.target.name;
+		const value=e.target.value;
+		setUserLogin({...UserLogin,[name]:value});
+	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// const newRecord = { ...UserLogin, id: new Date().getTime().toString() };
-		const signData = {
-			email: email,
-			password: password,
-		};
-		console.log(signData);
-		axios
-			.post("http://capstone.dev/api/auth/signin", signData, {
-				headers: {
-					"Allow-origin-access-control": "true",
-				},
-			})
-			.then((res) => {
-				console.log(res);
-				if (res.status === 200) {
-					localStorage.setItem("user", JSON.stringify(res.data.jwt));
-					window.location.href = "/";
-				} else {
-					alert("Invalid Credentials");
+		const newRecord = { ...UserLogin, id: new Date().getTime().toString() }
+		axios.post('http://localhost:4000/app/signin',newRecord)
+		.then(res=>{
+			//const data=this;
+			if(res.data.status==="SUCCESS"){
+				if(res.data.data[0].Role==="instructor")
+				{
+					history.push({
+						pathname: '/instructor',
+						state: {name:res.data.data[0].Name,id:res.data.data[0].ID }
+					});
+			}
+					//window.location.href = "/instructor";
+				else if(res.data.data[0].Role==="student"){history.push('/student')}
+					//window.location.href = "/student";
 				}
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
-
+				else{
+					console.log(res.data)
+				}
+			
+		})
+	}
 	return (
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
@@ -88,9 +94,8 @@ export const SignIn = () => {
 						name='ID'
 						autoComplete='ID'
 						autoFocus
-						onChange={(e) => {
-							setEmail(e.target.value);
-						}}
+						value={UserLogin.ID}
+						onChange={handleInput}
 					/>
 					<TextField
 						variant='outlined'
@@ -102,22 +107,23 @@ export const SignIn = () => {
 						type='Password'
 						id='Password'
 						autoComplete='current-password'
-						onChange={(e) => {
-							setPassword(e.target.value);
-						}}
-					/>
+						value={UserLogin.Password}
+						onChange={handleInput}
+						/>
+
 					<Button
 						type='submit'
 						fullWidth
 						variant='contained'
-						className={classes.submit + " button button-primary"}
+						color="primary"
+						className={classes.submit}
 					>
 						Sign In
 					</Button>
 					<Grid container>
 						<Grid item xs>
-							<Link to='/signup' style={{ color: "#222" }}>
-								I don't have an account. Request admin
+							<Link to='/'>
+								I don't have an account.
 							</Link>
 						</Grid>
 					</Grid>

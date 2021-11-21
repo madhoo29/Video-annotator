@@ -1,10 +1,9 @@
 import React from 'react';
-import Main from './components/Main';
-
+//import Main from './components/Main';
+import MainComponent from "./MainComponent";
 const App = () => (
   <div>
-    <h1>File Upload</h1>
-    <Main />
+    <MainComponent />
   </div>
 );
 

@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-//import axios from 'axios';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -45,15 +45,15 @@ export const SignUp = () => {
 		const value = e.target.value;
 
 		setUserRegistration({ ...UserRegistration, [name]: value });
-	};
-	/*const handleSubmit = (e) => {
+	}
+	const handleSubmit = (e) => {
     e.preventDefault();
     const newRecord = { ...UserRegistration, id: new Date().getTime().toString() }
     console.log(newRecord);
     axios.post('http://localhost:4000/app/signup', newRecord)
       .then(res => console.log(res.data))
     //setRecords([...records])
-  }*/
+  }
 	return (
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
@@ -62,7 +62,7 @@ export const SignUp = () => {
 				<Typography component='h1' variant='h5'>
 					Sign up
 				</Typography>
-				<form className={classes.form} noValidate>
+				<form className={classes.form} noValidate onSubmit={handleSubmit}>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<TextField
@@ -113,7 +113,7 @@ export const SignUp = () => {
 								label='Password'
 								type='password'
 								id='password'
-								autoComplete='current-password'
+								autoComplete='Password'
 								value={UserRegistration.Password}
 								onChange={handleInput}
 							/>
@@ -137,4 +137,4 @@ export const SignUp = () => {
 			</div>
 		</Container>
 	);
-};
+}
