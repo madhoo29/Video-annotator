@@ -56,7 +56,6 @@ export const SignIn = props=> {
 		const newRecord = { ...UserLogin, id: new Date().getTime().toString() }
 		axios.post('http://localhost:4000/app/signin',newRecord)
 		.then(res=>{
-			//const data=this;
 			if(res.data.status==="SUCCESS"){
 				if(res.data.data[0].Role==="instructor")
 				{
@@ -66,7 +65,12 @@ export const SignIn = props=> {
 					});
 			}
 					//window.location.href = "/instructor";
-				else if(res.data.data[0].Role==="student"){history.push('/student')}
+				else if(res.data.data[0].Role==="student"){
+					history.push({
+						pathname: '/student',
+						state: {name:res.data.data[0].Name,id:res.data.data[0].ID }
+					});
+				}
 					//window.location.href = "/student";
 				}
 				else{
@@ -94,7 +98,8 @@ export const SignIn = props=> {
 						name='ID'
 						autoComplete='ID'
 						autoFocus
-						value={UserLogin.ID}
+						//value={UserLogin.ID}
+						//value = ''
 						onChange={handleInput}
 					/>
 					<TextField
@@ -106,8 +111,8 @@ export const SignIn = props=> {
 						label='Password'
 						type='Password'
 						id='Password'
-						autoComplete='current-password'
-						value={UserLogin.Password}
+						//autoComplete='current-password'
+						//value={UserLogin.Password}
 						onChange={handleInput}
 						/>
 

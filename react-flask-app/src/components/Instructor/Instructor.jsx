@@ -15,13 +15,18 @@ import Box from '@material-ui/core/Box';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
+//import Link from '@material-ui/core/Link';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import ReactPlayer from 'react-player';
 import axios from "axios";
-import {Component} from 'react';
-import Modal from "react-responsive-modal";
+//import {Component} from 'react'
+//import Modal from "react-responsive-modal";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
+import { blue } from '@mui/material/colors';
+import VideoPlayer from "./VideoPlayer";
+import {useHistory} from "react-router-dom";
 
 function Copyright(){
     return (
@@ -40,145 +45,104 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const theme = createTheme();
 
-export const Instructor = (props) =>{
+// const OpenInNewTab = (video) => {
+//   const history=useHistory();
+//   const data = {'video' : video};
+//   history.push({
+//     pathname: '/player',
+//     state: data
+//   });
+//   // const xml = {Player}(data);
+//   // const newWindow = window.open(xml, '_blank', 'noopener,noreferrer')
+//   // if (newWindow) newWindow.opener = null
+// }
+
+//Then add to your onClick
+
+
+export const Instructor = props=>{
     const location = useLocation();
     const {name,id} = props.location.state;
     const baseURL = "http://localhost:5000/retrieve";
     //baseURL += '?id=' + id.toString();
 
     const [videolinks, setLinks] = React.useState(null);
-    //const { state } = this.props.location;
-  React.useEffect(() => {
+    React.useEffect(() => {
     axios.get(baseURL,{params : {id}}).then((response) => {
       setLinks(response.data);
     });
   }, [id]);
 
   if (!videolinks) return null;
-
+  var i = 1;
 
   return (
-    
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-          {location.state.detail}
-            Album layout
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: 'background.paper',
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="sm">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="text.primary"
-              gutterBottom
-            >
-                {name}
-                {id}
-              Album layout
-            </Typography>
-            <Typography variant="h5" align="center" color="text.secondary" paragraph>
-              Something short and leading about the collection below—its contents,
-              the creator, etc. Make it short and sweet, but not too short so folks
-              don&apos;t simply skip over it entirely.
-            </Typography>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
-            </Stack>
-          </Container>
-        </Box>
 
-        <Box>
-        <div>
-        <Container sx={{ py: 8 }} maxWidth="md">
-        <Grid item xs={12} sm={6} md={4}>
-            {videolinks.urls.map((video) => (
-                <Card>
+    <Box>
+    <div>
+    <Container sx={{ py: 8 }} maxWidth="md">
+    <Grid item xs={12} sm={6} md={4}>
+        {videolinks.urls.map((video) => (
+            <Typography>
 
-                    <ReactPlayer url = {video}
-                    light = {true}
-                    playing
-                    controls/>
-
-                </Card>
-            ))
-            }
-        </Grid>
-        </Container>
-        </div>
-        </Box>  
-
-        <Container sx={{ py: 8 }} maxWidth="md">
-          {/* End hero unit */}
-          <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <Card
-                  sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                {/* <ReactPlayer url = {video}
+                light = {true}
+                playing
+                controls/> */}
+                <span> {i++} </span>
+                {/* <Link
+              to='/player'
+              state={{name:'hal'}}
                 >
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      // 16:9
-                      pt: '56.25%',
-                    }}
-                    image="https://source.unsplash.com/random"
-                    alt="random"
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
-                    </Typography>
-                    <Typography>
-                      This is a media card. You can use this section to describe the
-                      content.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </main>
-      {/* Footer */}
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography>
-        <Copyright />
-      </Box>
-      {/* End footer */}
-    </ThemeProvider>
+            View
+          </Link> */}
+      {/* <Router>
+      <Route path="/player" component={Player}  /> */}
+      {/* render={props => 
+<Player {...props} />} */}
+      <Link
+        to={{
+          pathname: "/player",
+          state: { video: video} }}
+          //component={Player}
+        
+      >
+        View
+      </Link>
+      {/* </Router> */}
+
+                {/* <Router>
+          
+                <Switch>
+                  <Route exact path="/player" 
+                      component={Player}>
+                  </Route> 
+                  <Button color = {blue[500]} onClick={() => OpenInNewTab(video) } variant="contained">View video</Button>
+                </Switch>
+              </Router> */}
+
+            </Typography>
+        ))
+        }
+    </Grid>
+    </Container>
+    </div>
+    </Box> 
   );
 }
+
+//import "./App.scss";
+
+// export const Instructor=()=>{
+  
+//   const [modal, setModal] = useState(false);
+//   const Toggle = () => setModal(!modal);
+  
+//   return (
+//     <div className="App">
+//       <button className="clickme" onClick={() => Toggle()}>
+//         Modal
+//       </button>
+//     </div>
+//   );
+// }
