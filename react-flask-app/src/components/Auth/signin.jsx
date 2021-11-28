@@ -84,12 +84,12 @@ export const SignIn = props=> {
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}></Avatar>
-				<Typography component='h1' variant='h5'>
+				<Typography component='h1' variant='h5' style={{color:"white"}}>
 					Sign in
 				</Typography>
 				<form className={classes.form} noValidate onSubmit={handleSubmit}>
 					<TextField
-						variant='outlined'
+						variant='filled'
 						margin='normal'
 						required
 						fullWidth
@@ -98,12 +98,13 @@ export const SignIn = props=> {
 						name='ID'
 						autoComplete='ID'
 						autoFocus
-						//value={UserLogin.ID}
-						//value = ''
+						value={UserLogin.ID}
+						color="error"
+						style={{background : "white", borderColor : "black", textColor : "black", borderRadius : "5px"}}
 						onChange={handleInput}
 					/>
 					<TextField
-						variant='outlined'
+						variant='filled'
 						margin='normal'
 						required
 						fullWidth
@@ -111,8 +112,10 @@ export const SignIn = props=> {
 						label='Password'
 						type='Password'
 						id='Password'
-						//autoComplete='current-password'
-						//value={UserLogin.Password}
+						autoComplete='current-password'
+						value={UserLogin.Password}
+						color="error"
+						style={{background : "white", borderColor : "black", textColor : "black"}}
 						onChange={handleInput}
 						/>
 
@@ -120,14 +123,14 @@ export const SignIn = props=> {
 						type='submit'
 						fullWidth
 						variant='contained'
-						color="primary"
+						color="secondary"
 						className={classes.submit}
 					>
 						Sign In
 					</Button>
-					<Grid container>
-						<Grid item xs>
-							<Link to='/'>
+					<Grid container justify='flex-end'>
+						<Grid item>
+							<Link to='/' style={{color:"white"}}>
 								I don't have an account.
 							</Link>
 						</Grid>

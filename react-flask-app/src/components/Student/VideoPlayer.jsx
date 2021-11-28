@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import "../../../node_modules/video-react/dist/video-react.css"
 import "../../../node_modules/react-chat-elements/dist/main.css"
 import { MessageBox, Button, Input } from 'react-chat-elements';
-import "./index.css"
+import "./student.css"
 import List from "@material-ui/core/List";
 // First simple component with heading tag
 // import "/Users/madhoolikag/react-flask-app/node_modules/video-react/dist/video-react.css";
@@ -198,7 +198,7 @@ class VideoPlayer extends React.Component
     </Item>
     </Grid>
     <Grid item xs={12} md={2} >
-    <Item style={{"overflow-y" : "scroll", "height" : "86vh"}}>
+    <Item style={{"overflow-y" : "scroll", "height" : "86vh", "background" : "#d1e0e0"}}>
       <div ref={this.chatContainer}>
         {/* <div className="content"> */}
         {/* <List className="comment-list"> */}
@@ -230,6 +230,7 @@ class VideoPlayer extends React.Component
               />
             </>
           )}
+          <hr></hr>
           <p> </p>
           </>
         ))}

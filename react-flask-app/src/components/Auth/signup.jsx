@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+
 export const SignUp = () => {
 	const classes = useStyles();
 	const [UserRegistration, setUserRegistration] = useState({
@@ -59,28 +60,29 @@ export const SignUp = () => {
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}></Avatar>
-				<Typography component='h1' variant='h5'>
+				<Typography component='h1' variant='h5' style={{color:"white"}}>
 					Sign up
 				</Typography>
 				<form className={classes.form} noValidate onSubmit={handleSubmit}>
-					<Grid container spacing={2}>
+					<Grid container spacing={2} >
 						<Grid item xs={12}>
 							<TextField
 								autoComplete='fname'
 								name='Name'
-								variant='outlined'
+								variant='filled'
 								required
 								fullWidth
 								id='Name'
 								label='Name'
 								autoFocus
 								value={UserRegistration.Name}
+								style={{background : "white", borderColor : "black", textColor : "black"}}
 								onChange={handleInput}
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								variant='outlined'
+								variant='filled'
 								required
 								fullWidth
 								id='ID'
@@ -88,12 +90,14 @@ export const SignUp = () => {
 								name='ID'
 								autoComplete='ID'
 								value={UserRegistration.ID}
+								style={{background : "white", borderColor : "black", textColor : "black"}}
+								//style={styles.creditInput}
 								onChange={handleInput}
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								variant='outlined'
+								variant='filled'
 								required
 								fullWidth
 								id='Role'
@@ -101,12 +105,13 @@ export const SignUp = () => {
 								name='Role'
 								autoComplete='Role'
 								value={UserRegistration.Role}
+								style={{background : "white", borderColor : "black", textColor : "black"}}
 								onChange={handleInput}
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								variant='outlined'
+								variant='filled'
 								required
 								fullWidth
 								name='Password'
@@ -115,6 +120,7 @@ export const SignUp = () => {
 								id='password'
 								autoComplete='Password'
 								value={UserRegistration.Password}
+								style={{background : "white", borderColor : "black", textColor : "black"}}
 								onChange={handleInput}
 							/>
 						</Grid>
@@ -123,14 +129,14 @@ export const SignUp = () => {
 						type='submit'
 						fullWidth
 						variant='contained'
-						color='primary'
+						color='secondary'
 						className={classes.submit}
 					>
 						Sign Up
 					</Button>
 					<Grid container justify='flex-end'>
 						<Grid item>
-							<Link to={"/signin"}>Have an account? Sign in</Link>
+							<Link to={"/signin"} style={{color:"white"}}>Have an account? Sign in</Link>
 						</Grid>
 					</Grid>
 				</form>

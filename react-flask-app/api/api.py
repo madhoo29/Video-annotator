@@ -3,10 +3,11 @@ import hashlib
 from flask import Flask, flash, json, request, redirect, url_for, session, jsonify
 from werkzeug.utils import secure_filename
 import pyrebase
+import random
 import webbrowser
+random.seed(5)
 
 # import {initializeApp} from "firebase/app"
-video_no = 1
 annotation_no = 1
 
 def hash(s):
@@ -73,7 +74,6 @@ app = Flask(__name__)
 @app.route('/upload', methods=['POST','GET'])
 def fileUpload():
     print(request.args)
-    d = get_dict(request.args)
     collection = db.collection('videos') 
     global video_no
     # target=os.path.join(UPLOAD_FOLDER,'test_docs')
@@ -81,23 +81,31 @@ def fileUpload():
     #     os.mkdir(target)
     # logger.info("welcome to upload`")
     file = request.files['file'] 
+    fname = request.form['filename']
+    print(fname)
+    name = request.form['name']
+    id = request.form['id']
+    print(name)
+    video_no = random.randint(1,1000)
     filename = "video_" + str(video_no)
-    video_no += 1 
-    storage.child("videos/" + filename).put(file)
-    link = storage.child("videos/" + filename).get_url(None)
+    storage.child("videos/" + filename + fname).put(file)
+    link = storage.child("videos/" + filename + fname).get_url(None)
     # teacher = request.teacher
-    res = collection.document(hash(link)).set({
+    res = collection.document(str(hash(link))).set({
         'url': link,
-        'id' : d['id'],
+        'id' : id,
+        'name' : name,
+        'title' : fname,
         'comments' : []
     })
     
     collection = db.collection('teacher_queries')
-    doc = collection.document(d['id']).get()
+    doc = collection.document(id).get()
     if(not(doc.exists)):
         collection.document(id).set({
             'queries' : []
-        })       
+        })   
+    return ""    
 
 
 @app.route('/comment', methods = ['POST'])
@@ -138,17 +146,20 @@ def addComment():
 
 @app.route('/answer', methods = ['POST','GET'])
 def addAnswer():
+    print(request.form)
     comment = request.form['comment']
     url = request.form['url']
     ans = request.form['answer']
 
     collection = db.collection('annotations') 
-    h = str(hash(comment))
+    # h = str(hash(comment))
+    h = comment
+    print(h)
     res = collection.document(h).get().to_dict()
     arr = res['answers']
     arr.append(ans)
     res = collection.document(h).update({
-        'answer' : ans
+        'answers' : arr
     })
 
     collection = db.collection('videos')
@@ -158,10 +169,17 @@ def addAnswer():
     collection = db.collection('teacher_queries') 
     res = collection.document(teacher).get().to_dict()
     arr = res['queries']
+    print(arr, h)
     arr.remove(h)
     res = collection.document(teacher).update({
-        'answer' : ans
+        'queries' : arr
     })
+    d = dict()
+    d['id'] = teacher
+    response = jsonify(d)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    print(d)
+    return response
 
 
 # @app.route('/remove', methods = ['POST','GET'])
@@ -219,8 +237,13 @@ def retrieve():
         docs = db.collection('videos').stream() 
         res = []
         for doc in docs:
-            res.append(doc.get('url'))
-        d = dict()
+            if(doc.to_dict()):
+                temp = dict()
+                temp['url'] = doc.get('url')
+                temp['title'] = doc.get('title')
+                temp['name'] = doc.get('name')
+                res.append(temp)
+            d = dict()
         d['urls'] = res
         response = jsonify(d)
         response.headers.add('Access-Control-Allow-Origin', '*')
@@ -248,17 +271,97 @@ def retrieveAnnotations():
         response = jsonify(d)
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
+
+# get all annotations for a video
+@app.route('/retrieveTeacherAnnotations', methods = ['POST','GET'])
+def retrieveTeacherAnnotations():
+    with app.app_context():
+        url = request.form['url']
+        print("url : ", url)
+        print(hash(url))
+        docs = db.collection('videos').document(str(hash(url))).get()
+        id = docs.to_dict()['id']
+        an = db.collection('annotations')
+        te = db.collection('teacher_queries')
+        # record = docs.to_dict()
+        # queries = record['comments']
+        res = []
+        for i in te.document(id).to_dict()['queries']:
+            res.append(an.document(i).get().to_dict())
+        d = dict()
+        d['comments'] = res
+        response = jsonify(d)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
     
+# @app.route('/retrieveTeacher', methods = ['POST','GET'])
+# def retrieveTeacher():
+#     with app.app_context():
+#         id = request.form['id']
+#         docs = db.collection('videos').where('id', '==', id).stream() 
+#         print(docs)
+#         res = []
+#         queries = []
+#         for doc in docs:
+#             res.append(doc.get('url'))
+            
+#         d = dict()
+#         d['urls'] = res
+
+#         # collection = db.collection()
+#         # for i in d['urls']:
+
+#         # url = request.form['url']
+#         # print("url : ", url)
+#         # print(hash(url))
+#         # docs = db.collection('videos').document(str(hash(url))).get()
+#         # id = docs.to_dict()['id']
+#         an = db.collection('annotations')
+#         te = db.collection('teacher_queries')
+#         # record = docs.to_dict()
+#         # queries = record['comments']
+#         res = []
+#         for i in te.document(id).get().to_dict()['queries']:
+#             if(i):
+#                 res.append(an.document(i).get().to_dict())
+#         d['comments'] = res
+#         response = jsonify(d)
+#         response.headers.add('Access-Control-Allow-Origin', '*')
+#         return response
+
 @app.route('/retrieveTeacher', methods = ['POST','GET'])
 def retrieveTeacher():
     with app.app_context():
         id = request.form['id']
-        docs = db.collection('videos').where('id' == id).stream() 
+        te = db.collection('teacher_queries')
+        l = []
+        doc = te.document(id).get().to_dict()
+        if(doc):
+            for i in doc['queries']:
+                if(i):
+                    l.append(i)
+
+        docs = db.collection('videos').where('id', '==', id).stream() 
+        an = db.collection('annotations')
         res = []
+        res2 = []
         for doc in docs:
-            res.append(doc.get('url'))
+            temp = dict()
+            temp['url'] = doc.get('url')
+            temp['title'] = doc.get('title')
+            temp['name'] = doc.get('name')
+            res.append(temp)
+            for c in doc.get('comments'):
+                if(c and (c in l)):
+                    temp = an.document(c).get().to_dict()
+                    temp['url'] = doc.get('url')
+                    temp['name'] = doc.get('name')
+                    temp['title'] = doc.get('title')
+                    temp['comment_id'] = c
+                    res2.append(temp)
         d = dict()
         d['urls'] = res
+        d['comments'] = res2
         response = jsonify(d)
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response

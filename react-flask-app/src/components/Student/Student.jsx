@@ -30,7 +30,7 @@ import {
 import { blue } from '@mui/material/colors';
 //import VideoPlayer from "./VideoPlayer";
 import {useHistory} from "react-router-dom";
-import "./index.css"
+import "./student.css"
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import "../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
 import { BuildOutlined } from '@material-ui/icons';
@@ -52,10 +52,14 @@ class Student extends React.Component {
 
   handleUploadImage(ev) {
     ev.preventDefault();
+    const {name,id} = this.props.location.state;
+    console.log("ID : ", id, "Name :", name);
 
     const data = new FormData();
     data.append('file', this.uploadInput.files[0]);
     data.append('filename', this.fileName.value);
+    data.append('id', id);
+    data.append('name', name);
 
     fetch('http://localhost:5000/upload', {
       method: 'POST',
@@ -111,7 +115,7 @@ class Student extends React.Component {
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav pull-right">
                 <li class="nav-item">
-                    <button class="btn btn-dark" type="button" aria-current="page" href="#">Logout</button>
+                    <button class="btn btn-dark" type="button" aria-current="page" onClick={()=>this.props.history.push("/")}>Logout</button>
                 </li>
             </ul>
             </div>
@@ -120,8 +124,8 @@ class Student extends React.Component {
 
     <div class="banner">
         <div class="banner-child-header">
-            <h1>Student details : </h1>
-            <p>Name : {name}</p>
+            <h1>YOUR PROFILE : </h1>
+            {/* <p>Name : {name}</p> */}
             <p>ID : {id}</p>
         </div>
     </div>
@@ -137,13 +141,13 @@ class Student extends React.Component {
             <li class="list-group-item">
             <div class="flex-container">
                 <div class="flex-child-1" style={{"vertical-align": "middle"}}>
-                    Video name
+                    {video.title}
                 </div>
                 <div class="flex-child-2">
-                    Teacher name
+                    {video.name}
                 </div>
                 <div class="flex-child-3">
-                    <button class="btn btn-dark" id="btn-pos" type="button" aria-current="page" onClick={() => this.props.history.push('/player', {video : video})}> Watch </button>
+                    <button class="btn btn-dark" id="btn-pos" type="button" aria-current="page" onClick={() => this.props.history.push('/player', {video : video.url})}> Watch </button>
                 </div>
             </div>
         </li>
@@ -152,7 +156,7 @@ class Student extends React.Component {
 
     </ul>
 
-      <form onSubmit={this.handleUploadImage}>
+      {/* <form onSubmit={this.handleUploadImage}>
         <div>
           <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
         </div>
@@ -164,7 +168,7 @@ class Student extends React.Component {
           <button>Upload</button>
         </div>
         <img src={this.state.imageURL} alt="img" />
-      </form>
+      </form> */}
       </>
     
     );
